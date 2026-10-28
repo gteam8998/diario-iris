@@ -1,0 +1,1147 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FBFAFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#130E24" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Il tuo diario delle emozioni, con Iris che ti ascolta e ti dà un consiglio.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Iris">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Il Diario di Iris</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+<style>
+/* Layout: a lavender stage with Iris and the writing box side by side, then the mood line, then a vertical timeline with a date gutter. */
+:root {
+  --f-display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-ui: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --bg: #FBFAFF;
+  --surface: #FFFFFF;
+  --surface-2: #F3EEFF;
+  --ink: #1E1736;
+  --ink-2: #5B5278;
+  --ink-3: #766E93;
+  --line: #E6E0F7;
+  --grid: #EEE9FB;
+  --grid-strong: #CFC5EE;
+  --accent: #6B3FE0;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #EDE6FF;
+  --shadow: rgba(80, 50, 160, .28);
+  --panel-top: #F4EFFF;
+  --panel-bot: #E4D9FF;
+  --blob-a: #CDB8FF;
+  --blob-b: #E6D6FF;
+  --blob-o: .55;
+
+  --e-gioia: #B87F00;
+  --e-tristezza: #3B6FE0;
+  --e-stanchezza: #7C8B3A;
+  --e-ansia: #B13FC2;
+  --e-calma: #1B9E86;
+  --e-rabbia: #E0502B;
+
+  --skin: #F2D3BF;
+  --skin-shade: #E3B9A0;
+  --hair: #3B2A6B;
+  --cardi: #7C4DEB;
+  --cardi-dark: #5B33C4;
+  --shirt: #FFFFFF;
+  --glasses: #2B2050;
+  --mouth: #4A2348;
+  --blush: #F29BB0;
+  --paper: #FFFFFF;
+  --paper-line: #C9BDF2;
+  --pen: #2B2050;
+  --drop: #7CC4FF;
+  --spark: #F6B73C;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #130E24; --surface: #1C1633; --surface-2: #251D44; --ink: #F0ECFF; --ink-2: #B5ABD6; --ink-3: #9A90BE;
+    --line: #33295C; --grid: #2A2150; --grid-strong: #4A3E80; --accent: #9B7BFF; --accent-ink: #140E2A; --accent-soft: #2D2252;
+    --shadow: rgba(0, 0, 0, .55); --panel-top: #261C4B; --panel-bot: #1A1336; --blob-a: #4B2BB5; --blob-b: #2A1A66; --blob-o: .5;
+    --e-gioia: #BE8512; --e-tristezza: #6489E8; --e-stanchezza: #8A9E40; --e-ansia: #BB6CCF; --e-calma: #33A890; --e-rabbia: #E26541;
+    --shirt: #EDE7FF; --paper: #E9E3FF; --paper-line: #A99BE0; --skin: #EFCDB8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #130E24; --surface: #1C1633; --surface-2: #251D44; --ink: #F0ECFF; --ink-2: #B5ABD6; --ink-3: #9A90BE;
+  --line: #33295C; --grid: #2A2150; --grid-strong: #4A3E80; --accent: #9B7BFF; --accent-ink: #140E2A; --accent-soft: #2D2252;
+  --shadow: rgba(0, 0, 0, .55); --panel-top: #261C4B; --panel-bot: #1A1336; --blob-a: #4B2BB5; --blob-b: #2A1A66; --blob-o: .5;
+  --e-gioia: #BE8512; --e-tristezza: #6489E8; --e-stanchezza: #8A9E40; --e-ansia: #BB6CCF; --e-calma: #33A890; --e-rabbia: #E26541;
+  --shirt: #EDE7FF; --paper: #E9E3FF; --paper-line: #A99BE0; --skin: #EFCDB8;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 15px/1.55 var(--f-ui);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+button, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Ambient background */
+.ambient { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.ambient i { position: absolute; border-radius: 50%; filter: blur(70px); opacity: var(--blob-o); }
+.ambient .b1 { width: 46vmax; height: 46vmax; left: -14vmax; top: -16vmax; background: var(--blob-a); animation: drift1 28s ease-in-out infinite alternate; }
+.ambient .b2 { width: 38vmax; height: 38vmax; right: -14vmax; top: 22vh; background: var(--blob-b); animation: drift2 34s ease-in-out infinite alternate; }
+.ambient .b3 { width: 34vmax; height: 34vmax; left: 20vw; bottom: -20vmax; background: var(--blob-a); animation: drift1 40s ease-in-out infinite alternate-reverse; }
+@keyframes drift1 { to { transform: translate(8vmax, 6vmax) scale(1.08); } }
+@keyframes drift2 { to { transform: translate(-7vmax, -5vmax) scale(.94); } }
+
+.page { position: relative; z-index: 1; max-width: 1120px; margin-inline: auto; padding-block: 22px 56px; display: grid; gap: 26px; }
+
+/* Header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand-mark { width: 38px; height: 38px; border-radius: 12px; background: var(--accent); display: grid; place-items: center; flex: none; }
+.brand-mark svg { width: 22px; height: 22px; display: block; }
+h1 { font: 700 23px/1.1 var(--f-display); letter-spacing: -.01em; margin: 0; }
+.today { color: var(--ink-2); font-size: 13.5px; margin: 2px 0 0; text-transform: capitalize; }
+.top-right { display: flex; align-items: center; gap: 10px; }
+.sync { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 13px; font-weight: 500; color: var(--ink-2); --dot: var(--ink-3); }
+.sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--dot); flex: none; }
+.sync[data-state="on"] { --dot: var(--e-calma); }
+.sync[data-state="error"] { --dot: var(--e-rabbia); }
+.sync[data-state="connecting"] i { animation: blinkdot 1s ease-in-out infinite alternate; }
+@keyframes blinkdot { to { opacity: .25; } }
+.transfer summary { cursor: pointer; font: 600 17px/1.3 var(--f-display); list-style-position: outside; }
+.tr-body { display: grid; gap: 12px; margin-top: 14px; max-width: 70ch; }
+.tr-body p { margin: 0; color: var(--ink-2); }
+.tr-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.btn-sec { height: 42px; padding: 0 18px; border-radius: 12px; border: 1px solid var(--accent); background: var(--surface); color: var(--accent); font-weight: 600; }
+.btn-sec:hover { background: var(--accent-soft); }
+#importBox { min-height: 90px; }
+.icon-btn { width: 42px; height: 42px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; transition: transform .2s, border-color .2s; }
+.icon-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+.icon-btn svg { width: 20px; height: 20px; display: block; }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: stretch; }
+.iris-panel {
+  position: relative; overflow: hidden; border-radius: 28px; border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--panel-top), var(--panel-bot));
+  display: flex; flex-direction: column; gap: 12px; padding: 18px 18px 0; min-height: 470px; --aura: var(--accent);
+}
+.iris-panel[data-mood="gioia"] { --aura: var(--e-gioia); }
+.iris-panel[data-mood="calma"] { --aura: var(--e-calma); }
+.iris-panel[data-mood="tristezza"] { --aura: var(--e-tristezza); }
+.iris-panel[data-mood="ansia"] { --aura: var(--e-ansia); }
+.iris-panel[data-mood="rabbia"] { --aura: var(--e-rabbia); }
+.iris-panel[data-mood="stanchezza"] { --aura: var(--e-stanchezza); }
+.iris-panel[data-mood="worried"] { --aura: var(--e-tristezza); }
+.aura { position: absolute; left: 50%; bottom: -22%; width: 82%; aspect-ratio: 1; border-radius: 50%; background-color: var(--aura); filter: blur(48px); opacity: .34; transition: background-color .9s; animation: aura 7s ease-in-out infinite; pointer-events: none; }
+@keyframes aura { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.12); } }
+.who { position: relative; display: flex; align-items: baseline; gap: 8px; }
+.who b { font: 700 15px var(--f-display); }
+.who span { color: var(--ink-2); font-size: 13px; }
+.bubble { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 14px 16px; box-shadow: 0 14px 30px -22px var(--shadow); }
+.bubble::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 14px; height: 14px; background: var(--surface); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); transform: translateX(-50%) rotate(45deg); }
+.b-text { margin: 0; display: grid; font: 500 17px/1.42 var(--f-display); }
+.b-text > span { grid-area: 1 / 1; }
+.ghost { visibility: hidden; }
+.b-tip { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); display: grid; gap: 4px; animation: enter .5s cubic-bezier(.2, 1.2, .4, 1); }
+.b-tip-lbl { font-weight: 600; font-size: 12px; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); }
+.b-tip p { margin: 0; font-size: 15px; line-height: 1.5; }
+.b-tip .link-btn { justify-self: start; padding: 4px 0; font-size: 13.5px; }
+.iris { position: relative; width: min(300px, 88%); align-self: center; margin-top: auto; display: block; overflow: visible; }
+
+/* Character */
+.iris { --ox: 0px; --oy: 0px; --ps: 1; --by: 0px; --br: 0deg; --tilt: 0deg; --cheek: .35; }
+.iris[data-mood="thinking"] { --ox: -3px; --oy: 3px; --tilt: 3deg; --by: -1px; --br: 3deg; }
+.iris[data-mood="gioia"] { --cheek: .95; --tilt: 3deg; --by: -3px; }
+.iris[data-mood="calma"] { --cheek: .55; --tilt: -2deg; }
+.iris[data-mood="tristezza"] { --ps: .85; --oy: 3px; --by: 2px; --br: -16deg; --tilt: -4deg; }
+.iris[data-mood="ansia"] { --ps: 1.18; --by: -6px; --br: -9deg; }
+.iris[data-mood="rabbia"] { --ps: .8; --br: 8deg; --by: 1px; }
+.iris[data-mood="stanchezza"] { --ps: .38; --oy: 2px; --by: 3px; --br: -5deg; --tilt: -3deg; }
+.iris[data-mood="worried"] { --ps: 1.1; --by: -3px; --br: -18deg; --tilt: -3deg; }
+.bob { animation: bob 4.6s ease-in-out infinite alternate; }
+@keyframes bob { to { transform: translateY(-4px); } }
+.torso { transform-origin: 140px 300px; animation: breathe 4s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scaleY(1.018); } }
+.head { transform-origin: 140px 210px; transform: rotate(var(--tilt)); transition: transform .7s cubic-bezier(.3, 1.3, .5, 1); }
+.eye { transform-box: fill-box; transform-origin: center; animation: blink 6.5s infinite; }
+@keyframes blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.08); } }
+.pupil { transform-box: fill-box; transform-origin: center; transition: transform .35s ease, opacity .25s;
+  transform: translate(calc(var(--lx, 0px) + var(--ox)), calc(var(--ly, 0px) + var(--oy))) scaleY(var(--ps)); }
+.arc { opacity: 0; transition: opacity .25s; }
+.iris[data-mood="gioia"] .pupil, .iris[data-mood="calma"] .pupil { opacity: 0; }
+.iris[data-mood="gioia"] .arc-up, .iris[data-mood="calma"] .arc-down { opacity: 1; }
+.brow { transform-box: fill-box; transform-origin: center; transition: transform .5s cubic-bezier(.3, 1.4, .5, 1); }
+.brow-l { transform: translateY(var(--by)) rotate(var(--br)); }
+.brow-r { transform: translateY(var(--by)) rotate(calc(var(--br) * -1)); }
+.cheek { opacity: var(--cheek); transition: opacity .5s; }
+.m { opacity: 0; transition: opacity .25s; }
+.iris[data-mood="idle"] .m-smile, .iris[data-mood="thinking"] .m-hmm, .iris[data-mood="gioia"] .m-open, .iris[data-mood="calma"] .m-calm,
+.iris[data-mood="tristezza"] .m-sad, .iris[data-mood="ansia"] .m-wavy, .iris[data-mood="rabbia"] .m-flat,
+.iris[data-mood="stanchezza"] .m-yawn, .iris[data-mood="worried"] .m-worried { opacity: 1; }
+.bags, .drop, .sparkle, .zzz { opacity: 0; transition: opacity .4s; }
+.iris[data-mood="stanchezza"] .bags { opacity: .8; }
+.iris[data-mood="tristezza"] .bags { opacity: .35; }
+.iris[data-mood="ansia"] .drop { opacity: 1; animation: drip 2.4s ease-in infinite; }
+@keyframes drip { 0% { transform: translateY(-4px); } 70%, 100% { transform: translateY(8px); } }
+.iris[data-mood="gioia"] .sparkle { opacity: 1; animation: twinkle 1.8s ease-in-out infinite; }
+.sparkle { transform-box: fill-box; transform-origin: center; }
+.sparkle.s2 { animation-delay: .5s !important; }
+.sparkle.s3 { animation-delay: 1s !important; }
+@keyframes twinkle { 0%, 100% { transform: scale(.5) rotate(0); } 50% { transform: scale(1.1) rotate(25deg); } }
+.iris[data-mood="stanchezza"] .zzz { opacity: .9; animation: floatz 3s ease-in-out infinite; }
+@keyframes floatz { 50% { transform: translate(4px, -8px); } }
+.zzz { font: 700 20px var(--f-display); fill: var(--ink-2); }
+.pen { transform-box: fill-box; transform-origin: 0% 100%; }
+.iris[data-typing="true"] .pen { animation: scribble .32s ease-in-out infinite alternate; }
+@keyframes scribble { from { transform: translate(-4px, 1px) rotate(-6deg); } to { transform: translate(5px, -1px) rotate(8deg); } }
+
+/* Composer */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 22px; box-shadow: 0 22px 44px -34px var(--shadow); }
+.composer { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.lbl { font: 600 20px/1.2 var(--f-display); letter-spacing: -.005em; }
+textarea {
+  width: 100%; min-height: 150px; resize: vertical; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--line);
+  background: var(--surface-2); line-height: 1.55; transition: border-color .2s, box-shadow .2s;
+}
+textarea::placeholder { color: var(--ink-3); }
+textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+legend { padding: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 8px; font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.hint { font-weight: 400; font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--ink-3); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { --c: var(--accent); display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-weight: 500; font-size: 14px; transition: background .2s, border-color .2s, transform .15s; }
+.chip:hover { border-color: var(--c); transform: translateY(-1px); }
+.chip .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }
+.chip .n { color: var(--ink-3); font-variant-numeric: tabular-nums; font-size: 13px; }
+.chip[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 15%, var(--surface)); border-color: var(--c); box-shadow: 0 0 0 1px var(--c); }
+.nudge { animation: nudge .5s; }
+@keyframes nudge { 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+.int-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.seg button { width: 46px; height: 40px; border: 0; background: transparent; font-weight: 600; font-variant-numeric: tabular-nums; border-right: 1px solid var(--line); transition: background .2s; }
+.seg button:last-child { border-right: 0; }
+.seg button:hover { background: var(--accent-soft); }
+.seg button[aria-checked="true"] { background: var(--accent); color: var(--accent-ink); }
+.int-lbl { color: var(--ink-2); font-size: 14px; }
+.actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.btn { border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 15px; height: 46px; padding: 0 24px; border-radius: 14px; box-shadow: 0 14px 24px -14px var(--accent); transition: transform .15s, box-shadow .2s; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 18px 28px -14px var(--accent); }
+.btn:active { transform: translateY(1px); }
+.kbd { color: var(--ink-3); font-size: 13px; }
+.care { border: 1px solid var(--e-rabbia); background: color-mix(in srgb, var(--e-rabbia) 9%, var(--surface)); border-radius: 16px; padding: 14px 16px; font-size: 14.5px; }
+.care p { margin: 0; }
+.care p + p { margin-top: 6px; }
+.care strong { font-variant-numeric: tabular-nums; }
+
+/* Mood chart */
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; margin-bottom: 14px; }
+h2 { font: 600 21px/1.2 var(--f-display); margin: 0; letter-spacing: -.005em; }
+.sub { color: var(--ink-2); font-size: 14px; margin: 0; }
+.chart-wrap { position: relative; }
+.chart-wrap svg { display: block; width: 100%; overflow: visible; }
+.ax { fill: var(--ink-2); font: 500 11.5px var(--f-ui); }
+.lbl-pt { fill: var(--ink); font: 600 12px var(--f-ui); }
+.tip { position: absolute; top: 0; left: 0; pointer-events: none; opacity: 0; transition: opacity .12s; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; max-width: 250px; font-size: 13px; box-shadow: 0 16px 30px -18px var(--shadow); z-index: 3; }
+.tip.on { opacity: 1; }
+.tip .t-when { color: var(--ink-3); font-size: 12px; }
+.tip .t-emo { display: flex; align-items: center; gap: 7px; font-weight: 600; margin: 2px 0; }
+.tip .t-emo i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.tip .t-txt { color: var(--ink-2); overflow-wrap: anywhere; }
+
+/* Timeline */
+.filters { margin-bottom: 8px; }
+.note { display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; background: var(--accent-soft); border-radius: 14px; padding: 10px 14px; margin: 14px 0 20px; font-size: 14px; }
+.note p { margin: 0; color: var(--ink-2); }
+.link-btn { border: 0; background: none; color: var(--accent); font-weight: 600; padding: 6px 4px; border-radius: 8px; }
+.link-btn:hover { text-decoration: underline; }
+.tl { list-style: none; margin: 18px 0 0; padding: 0; }
+.tl-item { display: grid; grid-template-columns: 84px 26px minmax(0, 1fr); column-gap: 10px; padding-bottom: 18px; position: relative; }
+.tl-when { text-align: right; padding-top: 14px; min-width: 0; }
+.tl-day { display: block; font-weight: 600; font-size: 12px; line-height: 1.25; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2); }
+.tl-time { display: block; color: var(--ink-3); font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.tl-rail { position: relative; }
+.tl-rail::before { content: ""; position: absolute; left: 50%; top: 0; bottom: -18px; width: 2px; background: var(--line); transform: translateX(-50%); }
+.tl-item:last-child .tl-rail::before { bottom: auto; height: 22px; }
+.tl-item:first-child .tl-rail::before { top: 22px; }
+.tl-node { position: absolute; left: 50%; top: 16px; width: 14px; height: 14px; border-radius: 50%; background: var(--emo); transform: translateX(-50%); box-shadow: 0 0 0 4px var(--bg); }
+.tl-item.new .tl-node { animation: pulse 1.4s ease-out 2; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 4px var(--bg), 0 0 0 4px var(--emo); } 100% { box-shadow: 0 0 0 4px var(--bg), 0 0 0 16px transparent; } }
+.entry { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; min-width: 0; transition: transform .2s, box-shadow .2s; }
+.entry:hover { transform: translateY(-1px); box-shadow: 0 18px 30px -24px var(--shadow); }
+.tl-item.new .entry { animation: enter .6s cubic-bezier(.2, 1.2, .4, 1); }
+@keyframes enter { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+.entry-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge { display: inline-flex; align-items: center; gap: 7px; height: 28px; padding: 0 11px; border-radius: 999px; font-weight: 600; font-size: 13px; background: color-mix(in srgb, var(--emo) 15%, var(--surface)); }
+.badge i { width: 9px; height: 9px; border-radius: 50%; background: var(--emo); }
+.bars { display: inline-flex; align-items: flex-end; gap: 3px; height: 16px; }
+.bars i { width: 4px; border-radius: 2px; background: var(--line); }
+.bars i:nth-child(1) { height: 5px; } .bars i:nth-child(2) { height: 8px; } .bars i:nth-child(3) { height: 11px; } .bars i:nth-child(4) { height: 14px; } .bars i:nth-child(5) { height: 16px; }
+.bars i.on { background: var(--emo); }
+.tag { font-size: 12px; font-weight: 600; letter-spacing: .04em; color: var(--ink-3); border: 1px dashed var(--grid-strong); border-radius: 999px; padding: 1px 9px; }
+.entry-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.entry-tip { margin-top: 10px; background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; }
+.entry-tip-lbl { font-weight: 600; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); }
+.entry-tip p { margin: 0; font-size: 14px; }
+.entry-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.entry-actions .link-btn { font-size: 13.5px; font-weight: 500; color: var(--ink-2); padding: 6px 8px; margin-left: -8px; }
+.entry-actions .link-btn:hover { color: var(--accent); }
+.entry-actions .link-btn[data-armed="true"] { color: var(--e-rabbia); font-weight: 600; }
+.empty { color: var(--ink-2); padding: 18px 0; margin: 0; }
+footer { color: var(--ink-3); font-size: 13px; max-width: 70ch; }
+footer p { margin: 0 0 6px; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .iris-panel { min-height: 440px; }
+}
+@media (max-width: 520px) {
+  .card { padding: 18px 16px; }
+  .tl-item { grid-template-columns: 54px 22px minmax(0, 1fr); column-gap: 8px; }
+  .tl-day { letter-spacing: .03em; font-size: 11.5px; }
+  .seg button { width: 42px; }
+  h1 { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+</style>
+
+<div class="ambient" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
+
+<div class="page">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3c-3.6 0-6.5 2.7-6.5 6.2 0 2 .9 3.5 2.2 4.6.6.5.8 1.1.8 1.8V17h7v-1.4c0-.7.2-1.3.8-1.8 1.3-1.1 2.2-2.6 2.2-4.6C18.5 5.7 15.6 3 12 3Z" fill="#fff"/><path d="M9.5 20h5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <h1>Il Diario di Iris</h1>
+        <p class="today" id="today"></p>
+      </div>
+    </div>
+    <div class="top-right">
+      <span class="sync" id="sync" data-state="local" role="status"><i></i><span id="syncTxt">Salvato su questo dispositivo</span></span>
+      <button class="icon-btn" id="theme" type="button" aria-label="Cambia tema chiaro o scuro" title="Cambia tema">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main style="display:grid;gap:26px;min-width:0">
+    <section class="hero" aria-label="Scrivi e parla con Iris">
+      <div class="iris-panel" id="panel" data-mood="idle">
+        <div class="aura" aria-hidden="true"></div>
+        <div class="who"><b>Iris</b><span>il tuo amico di diario</span></div>
+        <div class="bubble">
+          <p class="b-text"><span class="ghost" id="ghost"></span><span id="typed" aria-hidden="true"></span></p>
+          <div class="b-tip" id="tipBox" hidden>
+            <span class="b-tip-lbl">Il mio consiglio</span>
+            <p id="tipText"></p>
+            <button class="link-btn" id="moreTip" type="button">Dammene un altro</button>
+          </div>
+          <span class="sr" id="sr" role="status" aria-live="polite"></span>
+        </div>
+
+        <svg class="iris" id="iris" viewBox="0 0 280 300" role="img" aria-label="Iris, il tuo amico, in ascolto" data-mood="idle" data-typing="false">
+          <g class="bob">
+            <rect x="122" y="184" width="36" height="44" rx="16" fill="var(--skin-shade)"/>
+            <g class="torso">
+              <path d="M30 300 C30 242 78 214 140 214 C202 214 250 242 250 300 Z" fill="var(--cardi)"/>
+              <path d="M110 216 L140 262 L170 216 Z" fill="var(--shirt)"/>
+              <path d="M110 216 L140 266 L170 216" fill="none" stroke="var(--cardi-dark)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+              <path d="M140 266 L140 300" stroke="var(--cardi-dark)" stroke-width="3" stroke-linecap="round"/>
+            </g>
+            <g class="head">
+              <circle cx="78" cy="134" r="11" fill="var(--skin)"/>
+              <circle cx="202" cy="134" r="11" fill="var(--skin)"/>
+              <ellipse cx="140" cy="128" rx="62" ry="66" fill="var(--skin)"/>
+              <path d="M77 126 C66 66 104 46 142 46 C184 46 216 68 203 126 C198 104 190 92 176 86 C160 92 138 92 122 82 C108 90 92 96 77 126 Z" fill="var(--hair)"/>
+              <circle class="cheek" cx="97" cy="159" r="9" fill="var(--blush)"/>
+              <circle class="cheek" cx="183" cy="159" r="9" fill="var(--blush)"/>
+              <g class="bags" fill="none" stroke="var(--skin-shade)" stroke-width="3" stroke-linecap="round">
+                <path d="M99 161 Q112 168 125 161"/><path d="M155 161 Q168 168 181 161"/>
+              </g>
+              <path d="M140 142 Q145 154 138 157" fill="none" stroke="var(--skin-shade)" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="112" cy="134" r="23" fill="rgba(255,255,255,.22)" stroke="var(--glasses)" stroke-width="3.5"/>
+              <circle cx="168" cy="134" r="23" fill="rgba(255,255,255,.22)" stroke="var(--glasses)" stroke-width="3.5"/>
+              <path d="M134 131 Q140 126 146 131" fill="none" stroke="var(--glasses)" stroke-width="3.5" stroke-linecap="round"/>
+
+              <g transform="translate(112 134)"><g class="eye">
+                <g class="pupil"><ellipse rx="6.5" ry="8.5" fill="var(--glasses)"/><circle cx="2" cy="-3" r="2.2" fill="#fff"/></g>
+                <path class="arc arc-up" d="M-10 4 Q0 -9 10 4" fill="none" stroke="var(--glasses)" stroke-width="4" stroke-linecap="round"/>
+                <path class="arc arc-down" d="M-10 -3 Q0 9 10 -3" fill="none" stroke="var(--glasses)" stroke-width="4" stroke-linecap="round"/>
+              </g></g>
+              <g transform="translate(168 134)"><g class="eye">
+                <g class="pupil"><ellipse rx="6.5" ry="8.5" fill="var(--glasses)"/><circle cx="2" cy="-3" r="2.2" fill="#fff"/></g>
+                <path class="arc arc-up" d="M-10 4 Q0 -9 10 4" fill="none" stroke="var(--glasses)" stroke-width="4" stroke-linecap="round"/>
+                <path class="arc arc-down" d="M-10 -3 Q0 9 10 -3" fill="none" stroke="var(--glasses)" stroke-width="4" stroke-linecap="round"/>
+              </g></g>
+
+              <g transform="translate(112 103)"><g class="brow brow-l"><path d="M-15 0 Q0 -5 15 0" fill="none" stroke="var(--hair)" stroke-width="5" stroke-linecap="round"/></g></g>
+              <g transform="translate(168 103)"><g class="brow brow-r"><path d="M-15 0 Q0 -5 15 0" fill="none" stroke="var(--hair)" stroke-width="5" stroke-linecap="round"/></g></g>
+
+              <g fill="none" stroke="var(--mouth)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                <path class="m m-smile" d="M125 174 Q140 184 155 174"/>
+                <path class="m m-hmm" d="M126 178 Q141 174 156 177"/>
+                <path class="m m-open" d="M119 168 Q140 198 161 168 Q140 176 119 168 Z" fill="var(--mouth)" stroke-width="3"/>
+                <path class="m m-calm" d="M129 175 Q140 181 151 175"/>
+                <path class="m m-sad" d="M125 182 Q140 169 155 182"/>
+                <path class="m m-wavy" d="M121 178 Q130.5 171 140 178 T159 178"/>
+                <path class="m m-flat" d="M127 178 L153 178"/>
+                <ellipse class="m m-yawn" cx="140" cy="180" rx="7" ry="9" fill="var(--mouth)" stroke="none"/>
+                <path class="m m-worried" d="M127 181 Q140 173 153 181"/>
+              </g>
+              <path class="drop" d="M207 86 C207 86 199 97 199 103 A8 8 0 0 0 215 103 C215 97 207 86 207 86 Z" fill="var(--drop)"/>
+            </g>
+
+            <g>
+              <rect x="98" y="252" width="96" height="48" rx="7" fill="var(--paper)" stroke="var(--paper-line)" stroke-width="2"/>
+              <path d="M110 268 H182 M110 280 H182 M110 292 H160" stroke="var(--paper-line)" stroke-width="2" stroke-linecap="round"/>
+              <ellipse cx="96" cy="272" rx="10" ry="12" fill="var(--skin)"/>
+              <ellipse cx="196" cy="266" rx="10" ry="12" fill="var(--skin)"/>
+              <g class="pen"><path d="M178 268 L200 244" stroke="var(--pen)" stroke-width="4.5" stroke-linecap="round"/></g>
+            </g>
+          </g>
+          <g class="sparkle s1"><path d="M52 80 l2.5 -6.5 l6.5 -2.5 l-6.5 -2.5 l-2.5 -6.5 l-2.5 6.5 l-6.5 2.5 l6.5 2.5 Z" fill="var(--spark)"/></g>
+          <g class="sparkle s2"><path d="M232 94 l2.5 -6.5 l6.5 -2.5 l-6.5 -2.5 l-2.5 -6.5 l-2.5 6.5 l-6.5 2.5 l6.5 2.5 Z" fill="var(--spark)"/></g>
+          <g class="sparkle s3"><path d="M216 46 l2 -5 l5 -2 l-5 -2 l-2 -5 l-2 5 l-5 2 l5 2 Z" fill="var(--spark)"/></g>
+          <g class="zzz"><text x="212" y="76">z</text><text x="230" y="50" font-size="26">Z</text></g>
+        </svg>
+      </div>
+
+      <form class="card composer" id="composer" autocomplete="off">
+        <label class="lbl" for="note">Cosa ti passa per la testa?</label>
+        <textarea id="note" rows="6" maxlength="1200" placeholder="Scrivi come viene, senza correggerti. Per esempio: «Oggi mi sento…»"></textarea>
+        <div class="care" id="care" hidden>
+          <p><strong>Se senti di essere in pericolo adesso, chiama il 112.</strong></p>
+          <p>Puoi anche parlare con qualcuno di Telefono Amico Italia: <strong>02 2327 2327</strong>.</p>
+        </div>
+        <fieldset>
+          <legend>Emozione <span class="hint" id="emoHint">Iris la riconosce mentre scrivi, ma scegli tu.</span></legend>
+          <div class="chips" id="chips" role="group" aria-label="Emozione"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Intensità</legend>
+          <div class="int-row">
+            <div class="seg" id="seg" role="radiogroup" aria-label="Intensità da 1 a 5"></div>
+            <span class="int-lbl" id="intLbl"></span>
+          </div>
+        </fieldset>
+        <div class="actions">
+          <button class="btn" type="submit">Salva nel diario</button>
+          <span class="kbd">oppure Ctrl + Invio</span>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" aria-labelledby="h-mood">
+      <div class="sec-head">
+        <h2 id="h-mood">Andamento dell’umore</h2>
+        <p class="sub" id="chartSummary"></p>
+      </div>
+      <div class="chart-wrap" id="chart"><div class="tip" id="tip" role="presentation"></div></div>
+    </section>
+
+    <section aria-labelledby="h-tl">
+      <div class="sec-head" style="margin-bottom:12px">
+        <h2 id="h-tl">Timeline</h2>
+        <p class="sub">Le voci più recenti sono in alto. Filtra per emozione.</p>
+      </div>
+      <div class="chips filters" id="filters" role="group" aria-label="Filtra per emozione"></div>
+      <div class="note" id="demoNote" hidden>
+        <p>Le voci con l’etichetta <b>Esempio</b> mostrano come funziona il diario.</p>
+        <button class="link-btn" id="dropDemo" type="button">Rimuovi gli esempi</button>
+      </div>
+      <ol class="tl" id="tl"></ol>
+    </section>
+
+    <details class="card transfer" id="transfer">
+      <summary>Sposta le voci da un’altra copia del diario</summary>
+      <div class="tr-body">
+        <p>Hai scritto voci in un’altra copia, per esempio nel file sul Desktop? Aprila, premi «Copia tutte le voci», poi torna qui e incollale nel riquadro.</p>
+        <div class="tr-row">
+          <button class="btn-sec" id="copyAll" type="button">Copia tutte le voci</button>
+          <span class="sub" id="copyMsg" role="status"></span>
+        </div>
+        <label class="int-lbl" for="importBox">Incolla qui le voci copiate</label>
+        <textarea id="importBox" rows="3" placeholder="Incolla qui il testo copiato dall’altra copia del diario"></textarea>
+        <div class="tr-row">
+          <button class="btn-sec" id="doImport" type="button">Importa voci</button>
+          <span class="sub" id="importMsg" role="status"></span>
+        </div>
+      </div>
+    </details>
+  </main>
+
+  <footer>
+    <p>Iris è un amico con cui sfogarti e i suoi consigli sono quelli di un amico: se un periodo difficile dura, parlane anche con una persona di fiducia o con uno psicologo.</p>
+    <p id="storeNote">Le voci restano salvate solo in questo browser e non vengono inviate altrove.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var el = function (tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var DAY = 864e5;
+
+  /* ---------- Emozioni ---------- */
+  var EMO = {
+    gioia: { label: "Gioia", pol: 1 },
+    tristezza: { label: "Tristezza", pol: -0.9 },
+    stanchezza: { label: "Stanchezza", pol: -0.4 },
+    ansia: { label: "Ansia", pol: -0.7 },
+    calma: { label: "Calma", pol: 0.7 },
+    rabbia: { label: "Rabbia", pol: -0.8 }
+  };
+  var ORDER = ["gioia", "tristezza", "stanchezza", "ansia", "calma", "rabbia"];
+  var PRIORITY = ["ansia", "tristezza", "rabbia", "stanchezza", "gioia", "calma"];
+  var INT_LABELS = ["Lieve", "Modesta", "Media", "Forte", "Molto forte"];
+
+  var LINES = {
+    gioia: ["Ehi, ma che bello! Racconta, racconta.", "Ti si legge il sorriso da qui.", "Sì! Questa me la devi raccontare tutta."],
+    calma: ["Si sente che stai bene. Mi piace un sacco.", "Che pace. Continua, ti leggo volentieri.", "Bello leggerti così tranquillo."],
+    tristezza: ["Ehi… mi dispiace. Sono qui, scrivi pure.", "Giornata pesante, eh? Tiralo fuori, ti ascolto.", "Non c’è fretta. Scrivi tutto quello che ti va."],
+    ansia: ["Ok, respira un attimo. Scrivilo qui, così esce dalla testa.", "Lo so, quando la testa corre è faticoso. Sono qui.", "Una cosa alla volta. Scrivi, poi ci pensiamo insieme."],
+    rabbia: ["Ahia. Sfogati pure, qui puoi dire tutto.", "Si sente che ti ha fatto arrabbiare. Raccontami.", "Vai, scrivi tutto senza filtri. Poi respiriamo."],
+    stanchezza: ["Sembri a pezzi. Dai, scrivi e poi riposa.", "Che giornata… ti meriti una pausa.", "Ti leggo stanco. Ancora due righe e poi basta."]
+  };
+  var AFTER = {
+    gioia: "Salvato! Mi fa piacere un sacco.",
+    calma: "Salvato. Ti leggo sereno, e mi piace.",
+    tristezza: "Salvato. Grazie di avermelo raccontato, davvero.",
+    ansia: "Salvato. Già scriverlo toglie un po’ di peso.",
+    rabbia: "Salvato. Hai fatto bene a sfogarti qui.",
+    stanchezza: "Salvato. Adesso pensa un po’ a te."
+  };
+  var GENERIC = ["Ti leggo, vai avanti.", "Dimmi tutto.", "Sono qui, continua pure."];
+  var CRISIS_LINE = "Ehi, quello che scrivi mi preoccupa davvero, e ci tengo a te. Non restare da solo con questo: parla adesso con una persona vera. Qui sotto ci sono i numeri.";
+
+  /* ---------- Consigli da amico ---------- */
+  var TIPS = {
+    gioia: [
+      "Raccontalo a qualcuno a cui vuoi bene. Le belle notizie raddoppiano quando le condividi.",
+      "Festeggia, anche in piccolo: un gelato, la tua canzone preferita a tutto volume. Te lo sei meritato.",
+      "Scrivi tre dettagli di oggi che vuoi ricordare. Nei giorni no rileggerli aiuta un sacco.",
+      "Usa quest’energia per quella cosa che rimandi da un po’. Oggi è il giorno giusto."
+    ],
+    calma: [
+      "Segnati cosa hai fatto per arrivare a sentirti così: la prossima volta sai già la ricetta.",
+      "Approfittane per una cosa lenta: qualche pagina di un libro, una tisana, una passeggiata senza cuffie.",
+      "Non riempire subito questo spazio. Goditelo ancora dieci minuti, il resto può aspettare.",
+      "Momento perfetto per sistemare una piccola cosa che ti pesa, ora che hai la testa libera."
+    ],
+    tristezza: [
+      "Stasera non devi fare niente di speciale. Coperta, qualcosa di caldo, una serie che conosci a memoria. Va benissimo così.",
+      "Scrivi a una persona di cui ti fidi, anche solo «ehi, giornata no». Non serve spiegare tutto.",
+      "Esci dieci minuti, anche solo intorno all’isolato. Un po’ d’aria e di luce cambia più di quanto sembra.",
+      "Trattati come tratteresti me se stessi così. Cosa mi diresti? Ecco, dillo anche a te."
+    ],
+    ansia: [
+      "Prendi un foglio e scrivi tutto quello che ti preoccupa. Poi cerchia solo le cose su cui puoi fare qualcosa oggi. Il resto per ora lo lasci lì.",
+      "Prova il 5-4-3-2-1: cinque cose che vedi, quattro che tocchi, tre che senti, due odori, un sapore. Ti riporta al presente.",
+      "Respira con me: dentro per 4 secondi, fuori per 6. Fallo cinque volte, poi riprendi.",
+      "Scegli il passo più piccolo possibile e fai solo quello. Tipo aprire il file, non finirlo."
+    ],
+    rabbia: [
+      "Prima di rispondere a chiunque, aspetta. Scrivi qui la risposta che vorresti dare, ma non mandarla stasera.",
+      "Sfogala col corpo: una corsa, le scale di corsa, pugni al cuscino. La rabbia deve uscire da qualche parte.",
+      "Chiediti cosa ti ha dato fastidio davvero, sotto sotto. Spesso è una cosa diversa da quella che sembra.",
+      "Hai tutto il diritto di essere arrabbiato. Domani, a mente fredda, decidi cosa farne."
+    ],
+    stanchezza: [
+      "Stasera a letto un po’ prima, con il telefono fuori dalla stanza. Domani mi ringrazi.",
+      "Guarda la lista di domani e cancella una cosa. Davvero, una sola.",
+      "Bevi un bicchiere d’acqua e mangia qualcosa di vero. Sembra banale, ma la stanchezza spesso parte da lì.",
+      "Concediti 15 minuti sdraiato senza schermi, senza sensi di colpa."
+    ]
+  };
+  var TOPICS = [
+    { re: /lavor|ufficio|(?<![\p{L}])capo(?![\p{L}])|collega|colleghi|riunion|(?<![\p{L}])e?-?mail|client[ei]|turno|progett|scadenz/iu,
+      neg: ["Il lavoro si sta prendendo troppo spazio. Stasera stacca davvero: notifiche della mail spente fino a domani.", "Domani spezza la giornata: ogni ora alzati cinque minuti dalla scrivania. Funziona più di quanto pensi."],
+      pos: ["Bel colpo al lavoro! Segnatelo da qualche parte: torna utile quando ti senti poco bravo, o quando chiedi un aumento."] },
+    { re: /studi|esam|scuola|universit|(?<![\p{L}])prof(?![\p{L}])|professor|verifica|interrogaz|lezion|tesi(?![\p{L}])|compit/iu,
+      neg: ["Prova il pomodoro: 25 minuti di studio, 5 di pausa. Quattro giri e poi stacchi sul serio.", "Un esame non dice chi sei. Fai del tuo meglio con quello che hai: il resto non dipende da te."],
+      pos: ["Grande! Ricordati come ci sei riuscito: quel metodo vale oro per la prossima volta."] },
+    { re: /dorm|sonno|insonn|svegli|incubo|nottata/iu,
+      neg: ["Stasera niente schermi nell’ultima mezz’ora, luce bassa, e se i pensieri girano scrivili qui prima di dormire."],
+      pos: ["Quando dormi bene si vede! Prova a tenere gli stessi orari anche nel weekend."] },
+    { re: /amic|ragazz[oa]|fidanzat|partner|moglie|marito|crush|relazion|mi ha lasciat|litigat|litigio/iu,
+      neg: ["Se c’è qualcosa in sospeso con qualcuno, parlatene a voce invece che in chat: si capiscono molte più cose.", "Non devi risolverlo stasera. Scrivi qui cosa vorresti dirgli, poi domani decidi se e come dirlo."],
+      pos: ["Le persone che ti fanno stare così vanno tenute strette. Diglielo ogni tanto: fa bene anche a loro."] },
+    { re: /mamma|papà|madre|padre|genitor|fratell|sorell|famiglia|nonn[oai]|figli/iu,
+      neg: ["Con la famiglia è complicato perché ci teniamo tanto. Prova a dire come ti senti tu, invece di cosa ha sbagliato l’altro."],
+      pos: ["Che bello. Ritagliati altro tempo così con loro, anche solo una cena senza telefoni."] },
+    { re: /mi sento sol|sono sol[oa](?![\p{L}])|solitudin|nessuno mi|isolat|esclus/iu,
+      neg: ["Scrivi a qualcuno che non senti da un po’. Spesso anche l’altra persona aspettava solo un messaggio."] },
+    { re: /instagram|tiktok|(?<![\p{L}])social|scroll|youtube/iu,
+      neg: ["Metti il telefono in un’altra stanza per un’ora. Lo scroll infinito spesso ci lascia peggio di prima."] },
+    { re: /palestr|allenament|sport|camminat|passeggiat|(?<!di )corsa|correre|yoga|nuot|(?<![\p{L}])bici/iu,
+      neg: ["Anche solo una camminata di venti minuti oggi può cambiare il tono della giornata."],
+      pos: ["Muoverti ti fa bene, si vede. Mettilo in calendario come un appuntamento fisso."] }
+  ];
+  function advise(e, avoid) {
+    var t = e.text.toLowerCase(), pos = EMO[e.emo].pol > 0, topic = [];
+    TOPICS.forEach(function (tp) { var arr = pos ? tp.pos : tp.neg; if (arr && tp.re.test(t)) topic = topic.concat(arr); });
+    var recent = (data && data.recentTips) || [];
+    var fresh = function (arr) { return arr.filter(function (x) { return x !== avoid && recent.indexOf(x) < 0; }); };
+    var cand = topic.length && Math.random() < 0.7 ? fresh(topic) : [];
+    if (!cand.length) cand = fresh(TIPS[e.emo]);
+    if (!cand.length) cand = fresh(topic);
+    if (!cand.length) cand = TIPS[e.emo].concat(topic).filter(function (x) { return x !== avoid; });
+    var tip = cand[Math.floor(Math.random() * cand.length)];
+    if (data) { data.recentTips = recent.concat(tip).slice(-6); }
+    return tip;
+  }
+
+  var LEXSRC = {
+    gioia: "felic|content[oaie]|bellissim|fantastic|entusias|emozionat|orgoglios|risat|ridere|sorrid|adoro|amo(?![\\p{L}])|ce l.ho fatta|promoss|vittori|festa|divert|gioia|fortunat|meravigli|perfett|strepitos|soddisfa|evviva",
+    calma: "calm|seren|tranquill|rilassat|relax|pace(?![\\p{L}])|respir|sollev|equilibri|passeggiat|meditaz|silenzio|riposat|leggera(?![\\p{L}])|leggero(?![\\p{L}])|sto bene|mi sento bene|un peso in meno|armonia|centrat",
+    tristezza: "trist|giù|piang|pianto|lacrim|vuot|malinconi|delus|mi manca|mi manchi|nostalgi|depress|abbattut|buio|dolore|solitudin|mi sento sol[oa]|senza voglia|non ho voglia|grigi|inutile|sconfort|mi sento pers[oa]",
+    ansia: "ansi|preoccup|paura|agitat|panico|nervos|teso(?![\\p{L}])|tesa(?![\\p{L}])|stress|tremo|batticuore|cuore batte|insonni|non dormo|incubo|spavent|timore|scadenza|esame|pensieri che girano|e se(?![\\p{L}])|sopraffatt|oppress|affanno|fiato corto",
+    rabbia: "arrabbi|rabbia|furios|incazz|odio|irrit|insopportabil|stuf|ingiust|litig|urla|alzato la voce|fastidio|frustrat|esasper|basta(?![\\p{L}])",
+    stanchezza: "stanc|esaust|sfinit|spossat|sonno|senza energi|poca energi|zero energi|non ho energi|a pezzi|svogliat|burnout|dormito poco|spent[oa]|fatic|senza pausa|esauri|distrutt"
+  };
+  var LEX = {};
+  ORDER.forEach(function (k) { LEX[k] = new RegExp("(?<![\\p{L}\\p{N}])(?:" + LEXSRC[k] + ")", "giu"); });
+  var OPP = { gioia: "tristezza", calma: "ansia" };
+  var CRISIS = /suicid|uccider(?:mi|e me)|farla finita|togliermi la vita|non voglio più vivere|voglio morire|farmi del male|autolesion|tagliarmi/iu;
+  var NEG = /(?:^|[^\p{L}])(?:non|mai|niente|poco)\s+(?:\p{L}+\s+)?$/u;
+
+  function analyze(text) {
+    var t = text.toLowerCase();
+    if (CRISIS.test(t)) return { crisis: true };
+    var score = {};
+    ORDER.forEach(function (k) { score[k] = 0; });
+    ORDER.forEach(function (k) {
+      var re = LEX[k]; re.lastIndex = 0; var m;
+      while ((m = re.exec(t))) {
+        var before = t.slice(Math.max(0, m.index - 16), m.index);
+        if (NEG.test(before)) { if (OPP[k]) score[OPP[k]] += 1; }
+        else score[k] += 1;
+        if (m[0].length === 0) re.lastIndex++;
+      }
+    });
+    var best = null, bestScore = 0;
+    PRIORITY.forEach(function (k) { if (score[k] > bestScore) { best = k; bestScore = score[k]; } });
+    if (!best) return { emo: null };
+    var it = bestScore >= 3 ? 4 : bestScore === 2 ? 3 : 2;
+    if ((text.match(/!/g) || []).length >= 2 || /(?<![\p{L}])\p{Lu}{4,}(?![\p{L}])/u.test(text)) it++;
+    if (/molto|troppo|tantissim|davvero|estrem|non ce la faccio|insopportab|sempre/i.test(text)) it++;
+    return { emo: best, int: Math.max(1, Math.min(5, it)) };
+  }
+
+  /* ---------- Dati ---------- */
+  var KEY = "diario-iris-v1";
+  function load() {
+    try { var raw = localStorage.getItem(KEY); if (raw) { var d = JSON.parse(raw); if (d && Array.isArray(d.entries)) return d; } } catch (e) {}
+    return null;
+  }
+  function persist() { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {} }
+  function seed() {
+    var now = Date.now();
+    var mk = function (hoursAgo, emo, int, text) { return { id: "d" + hoursAgo, ts: now - hoursAgo * 36e5, emo: emo, int: int, text: text, demo: true }; };
+    return { demoDismissed: false, entries: [
+      mk(7 * 24 + 10, "gioia", 4, "Colloquio andato meglio del previsto. Ho parlato con calma e ho avuto la sensazione che mi ascoltassero davvero."),
+      mk(6 * 24 + 3, "stanchezza", 3, "Sera storta: troppe email, nessuna pausa. Ho finito la giornata con il telefono in mano e la testa vuota."),
+      mk(5 * 24 + 7, "ansia", 4, "Il pensiero della scadenza di venerdì non mi lascia. Il cuore batte forte appena apro il portatile."),
+      mk(4 * 24 + 5, "rabbia", 3, "Discussione con un collega per una cosa da nulla. Ho alzato la voce e poi mi è dispiaciuto."),
+      mk(3 * 24 + 2, "tristezza", 3, "Giornata grigia. Mi manca avere voglia di qualcosa, anche delle cose che di solito mi piacciono."),
+      mk(2 * 24 + 6, "calma", 4, "Passeggiata lunga lungo il fiume, telefono spento. Ho la testa più leggera."),
+      mk(26, "gioia", 3, "Ho risposto a quel messaggio che rimandavo da giorni. Un peso in meno.")
+    ] };
+  }
+  var data = load();
+  if (!data) { data = seed(); }
+  data.entries.forEach(function (e) { if (e.tip === undefined) e.tip = advise(e); });
+  persist();
+
+  /* ---------- Elementi ---------- */
+  var iris = $("#iris"), panel = $("#panel"), ta = $("#note"), form = $("#composer");
+  var chipsBox = $("#chips"), seg = $("#seg"), care = $("#care");
+  var state = { manual: null, auto: null, intensity: 3, manualInt: false, spoken: "", filter: "all", lastLine: {} };
+
+  /* ---------- Iris: umore e voce ---------- */
+  function setMood(m) { iris.dataset.mood = m; panel.dataset.mood = m; }
+  var tipBox = $("#tipBox"), tipEntry = null;
+  function showTip(e) {
+    if (!e || !e.tip) { hideTip(); return; }
+    tipEntry = e; $("#tipText").textContent = e.tip;
+    tipBox.hidden = true; void tipBox.offsetWidth; tipBox.hidden = false;
+  }
+  function hideTip() { tipEntry = null; tipBox.hidden = true; }
+  $("#moreTip").addEventListener("click", function () {
+    if (!tipEntry) return;
+    tipEntry.tip = advise(tipEntry, tipEntry.tip); persist();
+    var te = tipEntry;
+    if (cloud && !te.demo && te.synced) queue(function () { return cloud.col.doc(te.id).update({ tip: te.tip }); });
+    showTip(tipEntry); renderTimeline();
+  });
+  var typeTimer = 0;
+  function say(text) {
+    clearInterval(typeTimer);
+    $("#ghost").textContent = text;
+    $("#sr").textContent = text;
+    var typed = $("#typed");
+    if (reduce) { typed.textContent = text; return; }
+    typed.textContent = "";
+    var i = 0, step = text.length > 110 ? 2 : 1;
+    typeTimer = setInterval(function () {
+      i += step; typed.textContent = text.slice(0, i);
+      if (i >= text.length) clearInterval(typeTimer);
+    }, 20);
+  }
+  function pick(emo) {
+    var arr = LINES[emo], last = state.lastLine[emo], i;
+    do { i = Math.floor(Math.random() * arr.length); } while (arr.length > 1 && i === last);
+    state.lastLine[emo] = i; return arr[i];
+  }
+  function idleLine() {
+    var h = new Date().getHours();
+    if (h < 5) return "Ancora sveglio? Se c’è qualcosa che ti gira in testa, scrivilo qui e poi prova a dormire.";
+    if (h < 12) return "Buongiorno! Come ti sei svegliato oggi?";
+    if (h < 18) return "Ehi! Come sta andando la giornata?";
+    return "Ehi, com’è andata oggi? Raccontami.";
+  }
+  function speakOnce(key, text, mood) {
+    setMood(mood);
+    if (state.spoken !== key) { state.spoken = key; say(text); }
+  }
+
+  /* ---------- Emozione e intensità ---------- */
+  var intBtns = [];
+  function buildSeg() {
+    for (var n = 1; n <= 5; n++) (function (n) {
+      var b = el("button", null, String(n)); b.type = "button"; b.setAttribute("role", "radio");
+      b.setAttribute("aria-label", n + " su 5, " + INT_LABELS[n - 1].toLowerCase());
+      b.addEventListener("click", function () { setIntensity(n, true); });
+      seg.append(b); intBtns.push(b);
+    })(n);
+  }
+  function setIntensity(n, manual) {
+    state.intensity = n; if (manual) state.manualInt = true;
+    intBtns.forEach(function (b, i) { b.setAttribute("aria-checked", String(i + 1 === n)); b.tabIndex = (i + 1 === n) ? 0 : -1; });
+    $("#intLbl").textContent = INT_LABELS[n - 1];
+  }
+  function currentEmo() { return state.manual || (state.auto && state.auto.emo) || null; }
+  var chipEls = {};
+  function buildChips() {
+    ORDER.forEach(function (k) {
+      var b = el("button", "chip"); b.type = "button"; b.style.setProperty("--c", "var(--e-" + k + ")");
+      b.append(el("i", "dot"), document.createTextNode(EMO[k].label));
+      b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", function () {
+        if (state.manual === k) { state.manual = null; } else { state.manual = k; }
+        updateChips();
+        var e = currentEmo();
+        hideTip();
+        if (e) { setMood(e); state.spoken = e; say(pick(e)); }
+      });
+      chipsBox.append(b); chipEls[k] = b;
+    });
+  }
+  function updateChips() {
+    var cur = currentEmo();
+    ORDER.forEach(function (k) { chipEls[k].setAttribute("aria-pressed", String(cur === k)); });
+    var hint = $("#emoHint");
+    if (state.manual) hint.textContent = "Hai scelto tu: " + EMO[state.manual].label + ". Tocca di nuovo per lasciare decidere a Iris.";
+    else if (state.auto && state.auto.emo) hint.textContent = "Iris pensa che sia " + EMO[state.auto.emo].label + ". Cambia se non è così.";
+    else hint.textContent = "Iris la riconosce mentre scrivi, ma scegli tu.";
+  }
+
+  /* ---------- Scrittura ---------- */
+  var debounce = 0, typingTimer = 0;
+  function think() {
+    var text = ta.value;
+    if (!text.trim()) {
+      state.auto = null; care.hidden = true; updateChips();
+      state.spoken = ""; speakOnce("idle", idleLine(), "idle"); return;
+    }
+    var r = analyze(text);
+    if (r.crisis) { care.hidden = false; speakOnce("crisis", CRISIS_LINE, "worried"); return; }
+    care.hidden = true;
+    state.auto = r.emo ? { emo: r.emo, int: r.int } : null;
+    if (r.emo && !state.manualInt) setIntensity(r.int, false);
+    updateChips();
+    var e = currentEmo();
+    if (e) speakOnce(e, pick(e), e);
+    else speakOnce("thinking", GENERIC[Math.floor(Math.random() * GENERIC.length)], "thinking");
+  }
+  ta.addEventListener("input", function () {
+    iris.dataset.typing = "true";
+    if (!tipBox.hidden) hideTip();
+    clearTimeout(typingTimer); typingTimer = setTimeout(function () { iris.dataset.typing = "false"; }, 900);
+    if (iris.dataset.mood === "idle") setMood("thinking");
+    clearTimeout(debounce); debounce = setTimeout(think, 320);
+  });
+  ta.addEventListener("keydown", function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); save(); }
+  });
+  form.addEventListener("submit", function (e) { e.preventDefault(); save(); });
+
+  function save() {
+    var text = ta.value.trim();
+    if (text.length < 2) { ta.focus(); state.spoken = "short"; say("Scrivi almeno qualcosina, anche solo una frase!"); return; }
+    var r = analyze(text);
+    var emo = state.manual || (r.emo || null);
+    var crisis = !!r.crisis;
+    if (!emo) {
+      chipsBox.classList.remove("nudge"); void chipsBox.offsetWidth; chipsBox.classList.add("nudge");
+      state.spoken = "ask"; setMood("thinking"); say("Non ho capito bene come ti senti. Me lo dici tu? Scegli l’emozione qui sotto.");
+      return;
+    }
+    var entry = { id: "e" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), ts: Date.now(), emo: emo, int: state.intensity, text: text, demo: false };
+    entry.tip = crisis ? null : advise(entry);
+    entry.synced = false;
+    data.entries.push(entry); persist(); upload(entry);
+    ta.value = ""; state.manual = null; state.auto = null; state.manualInt = false; setIntensity(3, false); updateChips();
+    iris.dataset.typing = "false";
+    if (crisis) { care.hidden = false; hideTip(); setMood("worried"); state.spoken = "crisis"; say(CRISIS_LINE); }
+    else { care.hidden = true; setMood(emo); state.spoken = "saved"; say(AFTER[emo]); showTip(entry); }
+    state.filter = "all";
+    renderAll(entry.id);
+  }
+
+  /* ---------- Date ---------- */
+  var fmtDayShort = new Intl.DateTimeFormat("it-IT", { weekday: "short", day: "numeric", month: "short" });
+  var fmtTime = new Intl.DateTimeFormat("it-IT", { hour: "2-digit", minute: "2-digit" });
+  var fmtLong = new Intl.DateTimeFormat("it-IT", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  function startOfDay(ts) { var d = new Date(ts); d.setHours(0, 0, 0, 0); return d.getTime(); }
+  function dayLabel(ts) {
+    var diff = Math.round((startOfDay(Date.now()) - startOfDay(ts)) / DAY);
+    if (diff === 0) return "Oggi"; if (diff === 1) return "Ieri";
+    return fmtDayShort.format(ts).replace(".", "");
+  }
+  $("#today").textContent = new Intl.DateTimeFormat("it-IT", { weekday: "long", day: "numeric", month: "long" }).format(Date.now());
+
+  /* ---------- Timeline ---------- */
+  var filtersBox = $("#filters");
+  function renderFilters() {
+    filtersBox.textContent = "";
+    var counts = { all: data.entries.length };
+    ORDER.forEach(function (k) { counts[k] = 0; });
+    data.entries.forEach(function (e) { counts[e.emo]++; });
+    var mk = function (key, label, c) {
+      var b = el("button", "chip"); b.type = "button"; b.style.setProperty("--c", c);
+      if (key !== "all") b.append(el("i", "dot"));
+      b.append(document.createTextNode(label + " "), el("span", "n", String(counts[key])));
+      b.setAttribute("aria-pressed", String(state.filter === key));
+      b.addEventListener("click", function () { state.filter = (state.filter === key) ? "all" : key; renderFilters(); renderTimeline(); });
+      filtersBox.append(b);
+    };
+    mk("all", "Tutte", "var(--accent)");
+    ORDER.forEach(function (k) { mk(k, EMO[k].label, "var(--e-" + k + ")"); });
+  }
+  function renderTimeline(newId) {
+    var list = $("#tl"); list.textContent = "";
+    var hasDemo = data.entries.some(function (e) { return e.demo; });
+    $("#demoNote").hidden = !hasDemo;
+    var items = data.entries.slice().sort(function (a, b) { return b.ts - a.ts; })
+      .filter(function (e) { return state.filter === "all" || e.emo === state.filter; });
+    if (!items.length) {
+      var li = el("li", "empty", state.filter === "all" ? "Il diario è vuoto. Scrivi la prima voce qui sopra." : "Nessuna voce con questa emozione, per ora.");
+      list.append(li); return;
+    }
+    var prev = null;
+    items.forEach(function (e) {
+      var li = el("li", "tl-item" + (e.id === newId ? " new" : ""));
+      li.style.setProperty("--emo", "var(--e-" + e.emo + ")");
+      var when = el("div", "tl-when");
+      var dk = startOfDay(e.ts);
+      if (dk !== prev) { when.append(el("span", "tl-day", dayLabel(e.ts))); prev = dk; }
+      when.append(el("span", "tl-time", fmtTime.format(e.ts)));
+      var rail = el("div", "tl-rail"); rail.append(el("i", "tl-node"));
+      var card = el("article", "entry");
+      var head = el("div", "entry-head");
+      var badge = el("span", "badge"); badge.append(el("i"), document.createTextNode(EMO[e.emo].label));
+      var bars = el("span", "bars"); bars.setAttribute("role", "img"); bars.setAttribute("aria-label", "Intensità " + e.int + " su 5");
+      for (var n = 1; n <= 5; n++) bars.append(el("i", n <= e.int ? "on" : ""));
+      head.append(badge, bars);
+      if (e.demo) head.append(el("span", "tag", "Esempio"));
+      var p = el("p", "entry-text", e.text);
+      var act = el("div", "entry-actions");
+      var rr = el("button", "link-btn", "Rileggi con Iris"); rr.type = "button";
+      rr.addEventListener("click", function () { reread(e); });
+      var del = el("button", "link-btn", "Elimina"); del.type = "button";
+      var armTimer = 0;
+      del.addEventListener("click", function () {
+        if (del.dataset.armed === "true") { clearTimeout(armTimer); removeEntry(e.id); return; }
+        del.dataset.armed = "true"; del.textContent = "Conferma eliminazione";
+        armTimer = setTimeout(function () { del.dataset.armed = "false"; del.textContent = "Elimina"; }, 3000);
+      });
+      act.append(rr, del);
+      card.append(head, p);
+      if (e.tip) {
+        var tb = el("div", "entry-tip");
+        tb.append(el("span", "entry-tip-lbl", "Consiglio di Iris"), el("p", null, e.tip));
+        card.append(tb);
+      }
+      card.append(act);
+      li.append(when, rail, card);
+      list.append(li);
+    });
+  }
+  function removeEntry(id) {
+    var gone = data.entries.filter(function (e) { return e.id === id; })[0];
+    data.entries = data.entries.filter(function (e) { return e.id !== id; }); persist(); renderAll();
+    if (cloud && gone && !gone.demo) queue(function () { return cloud.col.doc(id).delete(); });
+  }
+  $("#dropDemo").addEventListener("click", function () {
+    data.entries = data.entries.filter(function (e) { return !e.demo; }); data.demoDismissed = true; persist(); renderAll();
+  });
+  function reread(e) {
+    setMood(e.emo); state.spoken = "reread";
+    say("Ti ricordi? " + fmtLong.format(e.ts) + " ti sentivi " + EMO[e.emo].label.toLowerCase() + " (" + e.int + " su 5). E adesso come va?");
+    showTip(e);
+    var r = panel.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > window.innerHeight) panel.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+  }
+
+  /* ---------- Grafico dell'umore ---------- */
+  var NS = "http://www.w3.org/2000/svg";
+  var chartBox = $("#chart"), tip = $("#tip");
+  function s(tag, attrs) { var n = document.createElementNS(NS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); return n; }
+  function val(e) { return EMO[e.emo].pol * e.int; }
+  var plural = function (n, one, many) { return n + " " + (n === 1 ? one : many); };
+
+  function renderChart() {
+    var old = chartBox.querySelector("svg"); if (old) old.remove();
+    var oldMsg = chartBox.querySelector(".empty"); if (oldMsg) oldMsg.remove();
+    var recent = data.entries.filter(function (e) { return e.ts > Date.now() - 14 * DAY; });
+    var counts = {}; recent.forEach(function (e) { counts[e.emo] = (counts[e.emo] || 0) + 1; });
+    var top = null; PRIORITY.forEach(function (k) { if (counts[k] && (!top || counts[k] > counts[top])) top = k; });
+    $("#chartSummary").textContent = recent.length
+      ? "Ultimi 14 giorni · " + plural(recent.length, "voce", "voci") + " · più frequente: " + EMO[top].label
+      : "Nessuna voce negli ultimi 14 giorni";
+    var pts = data.entries.filter(function (e) { return e.ts > Date.now() - 30 * DAY; }).sort(function (a, b) { return a.ts - b.ts; }).slice(-30);
+    if (!pts.length) { chartBox.append(el("p", "empty", "Appena scrivi la prima voce, qui compare la tua linea dell’umore.")); return; }
+
+    var w = Math.max(280, chartBox.clientWidth), h = w < 520 ? 210 : 245;
+    var m = { l: w < 520 ? 46 : 58, r: 18, t: 18, b: 32 };
+    var t0 = pts[0].ts, t1 = pts[pts.length - 1].ts;
+    if (t1 - t0 < 6 * 36e5) { var mid = (t0 + t1) / 2; t0 = mid - 12 * 36e5; t1 = mid + 12 * 36e5; }
+    var pad = (t1 - t0) * 0.04; t0 -= pad; t1 += pad;
+    var X = function (t) { return m.l + (t - t0) / (t1 - t0) * (w - m.l - m.r); };
+    var Y = function (v) { return m.t + (5.4 - v) / 10.8 * (h - m.t - m.b); };
+
+    var svg = s("svg", { viewBox: "0 0 " + w + " " + h, width: w, height: h, role: "img", "aria-label": "Andamento dell’umore: " + plural(pts.length, "voce", "voci") + ". Il dettaglio è nella timeline qui sotto." });
+    [[4, "Alto"], [0, "Neutro"], [-4, "Basso"]].forEach(function (g) {
+      svg.append(s("line", { x1: m.l, x2: w - m.r, y1: Y(g[0]), y2: Y(g[0]), stroke: g[0] === 0 ? "var(--grid-strong)" : "var(--grid)", "stroke-width": g[0] === 0 ? 1.5 : 1 }));
+      var t = s("text", { x: m.l - 10, y: Y(g[0]) + 4, "text-anchor": "end", class: "ax" }); t.textContent = g[1]; svg.append(t);
+    });
+    var dayTicks = [], d = new Date(t0); d.setHours(24, 0, 0, 0);
+    for (; d.getTime() <= t1; d.setDate(d.getDate() + 1)) dayTicks.push(d.getTime());
+    var pxDay = (w - m.l - m.r) / ((t1 - t0) / DAY), every = Math.max(1, Math.ceil(66 / pxDay));
+    dayTicks.forEach(function (tk, i) {
+      if (i % every) return;
+      svg.append(s("line", { x1: X(tk), x2: X(tk), y1: m.t, y2: h - m.b, stroke: "var(--grid)", "stroke-width": 1 }));
+      var tx = s("text", { x: X(tk) + 4, y: h - 10, class: "ax" });
+      tx.textContent = new Intl.DateTimeFormat("it-IT", { weekday: "short", day: "numeric" }).format(tk).replace(".", ""); svg.append(tx);
+    });
+    var path = pts.map(function (e, i) { return (i ? "L" : "M") + X(e.ts).toFixed(1) + " " + Y(val(e)).toFixed(1); }).join(" ");
+    if (pts.length > 1) svg.append(s("path", { d: path, fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+    var cross = s("line", { y1: m.t, y2: h - m.b, stroke: "var(--ink-3)", "stroke-width": 1, "stroke-dasharray": "3 3", opacity: 0 }); svg.append(cross);
+    var dots = pts.map(function (e, i) {
+      var last = i === pts.length - 1;
+      if (last) svg.append(s("circle", { cx: X(e.ts), cy: Y(val(e)), r: 11, fill: "var(--accent)", opacity: .16 }));
+      var c = s("circle", { cx: X(e.ts), cy: Y(val(e)), r: last ? 7 : 5.5, fill: "var(--e-" + e.emo + ")", stroke: "var(--surface)", "stroke-width": 2 });
+      svg.append(c); return c;
+    });
+    var lastE = pts[pts.length - 1], lx = X(lastE.ts);
+    var lab = s("text", { x: lx, y: Y(val(lastE)) - 16, class: "lbl-pt", "text-anchor": lx > w - 90 ? "end" : "middle" });
+    lab.textContent = EMO[lastE.emo].label; svg.append(lab);
+
+    var hit = s("rect", { x: m.l, y: 0, width: w - m.l - m.r, height: h, fill: "transparent", tabindex: 0, role: "group", "aria-label": "Scorri i punti con le frecce per leggere le voci" });
+    svg.append(hit);
+    var cur = -1;
+    function show(i) {
+      if (cur >= 0) dots[cur].setAttribute("r", cur === pts.length - 1 ? 7 : 5.5);
+      cur = i; var e = pts[i], x = X(e.ts);
+      dots[i].setAttribute("r", 8);
+      cross.setAttribute("x1", x); cross.setAttribute("x2", x); cross.setAttribute("opacity", 1);
+      tip.textContent = "";
+      var when = el("div", "t-when", fmtLong.format(e.ts));
+      var emo = el("div", "t-emo"); var sw = el("i"); sw.style.background = "var(--e-" + e.emo + ")";
+      emo.append(sw, document.createTextNode(EMO[e.emo].label + " · intensità " + e.int + " su 5"));
+      var txt = el("div", "t-txt", e.text.length > 90 ? e.text.slice(0, 88).trim() + "…" : e.text);
+      tip.append(when, emo, txt); tip.classList.add("on");
+      var tw = tip.offsetWidth, left = x + 14; if (left + tw > w) left = x - tw - 14; if (left < 0) left = 0;
+      tip.style.transform = "translate(" + left.toFixed(0) + "px," + Math.max(0, Y(val(e)) - 30).toFixed(0) + "px)";
+    }
+    function hide() { if (cur >= 0) dots[cur].setAttribute("r", cur === pts.length - 1 ? 7 : 5.5); cur = -1; cross.setAttribute("opacity", 0); tip.classList.remove("on"); }
+    function nearest(clientX) {
+      var r = svg.getBoundingClientRect(), x = (clientX - r.left) * (w / r.width), best = 0, bd = 1e9;
+      pts.forEach(function (e, i) { var dd = Math.abs(X(e.ts) - x); if (dd < bd) { bd = dd; best = i; } });
+      return best;
+    }
+    hit.addEventListener("pointermove", function (ev) { show(nearest(ev.clientX)); });
+    hit.addEventListener("pointerleave", hide);
+    hit.addEventListener("blur", hide);
+    hit.addEventListener("keydown", function (ev) {
+      if (ev.key === "ArrowRight") { ev.preventDefault(); show(Math.min(pts.length - 1, cur < 0 ? 0 : cur + 1)); }
+      if (ev.key === "ArrowLeft") { ev.preventDefault(); show(Math.max(0, cur < 0 ? pts.length - 1 : cur - 1)); }
+    });
+    chartBox.insertBefore(svg, tip);
+  }
+  var rz = 0, lastW = 0;
+  if ("ResizeObserver" in window) new ResizeObserver(function () {
+    if (chartBox.clientWidth === lastW) return; lastW = chartBox.clientWidth;
+    cancelAnimationFrame(rz); rz = requestAnimationFrame(renderChart);
+  }).observe(chartBox);
+
+  /* ---------- Insieme ---------- */
+  function renderAll(newId) { renderFilters(); renderTimeline(newId); renderChart(); }
+
+  /* ---------- Tema ---------- */
+  $("#theme").addEventListener("click", function () {
+    var root = document.documentElement;
+    var dark = root.dataset.theme ? root.dataset.theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+  });
+
+  /* ---------- Sguardo che segue il puntatore ---------- */
+  if (!reduce) {
+    var raf = 0, mx = 0, my = 0;
+    window.addEventListener("pointermove", function (ev) {
+      mx = ev.clientX; my = ev.clientY;
+      if (raf) return;
+      raf = requestAnimationFrame(function () {
+        raf = 0; var r = iris.getBoundingClientRect();
+        var cx = r.left + r.width / 2, cy = r.top + r.height * 0.45;
+        var dx = Math.max(-1, Math.min(1, (mx - cx) / 320)), dy = Math.max(-1, Math.min(1, (my - cy) / 320));
+        iris.style.setProperty("--lx", (dx * 3.2).toFixed(2) + "px");
+        iris.style.setProperty("--ly", (dy * 2.6).toFixed(2) + "px");
+      });
+    }, { passive: true });
+  }
+
+  /* ---------- Sincronizzazione con l'account ---------- */
+  var cloud = null, chain = Promise.resolve();
+  var SYNC_TXT = { local: "Salvato su questo dispositivo", connecting: "Collegamento…", on: "Sincronizzato", error: "Non sincronizzato" };
+  var STORE_TXT = {
+    local: "Le voci restano salvate solo in questo browser e non vengono inviate altrove.",
+    on: "Le voci sono salvate nel tuo account Claude, in uno spazio privato: le ritrovi su ogni dispositivo dove apri questo diario, e nessun altro che apre il link può leggerle."
+  };
+  function setSync(s) {
+    $("#sync").dataset.state = s; $("#syncTxt").textContent = SYNC_TXT[s];
+    if (STORE_TXT[s]) $("#storeNote").textContent = STORE_TXT[s];
+  }
+  function queue(fn) {
+    chain = chain.then(function () {
+      return fn().catch(function (err) {
+        if (err && err.code === "unavailable") return new Promise(function (r) { setTimeout(r, 800 + Math.random() * 800); }).then(fn);
+        throw err;
+      });
+    }).catch(function (err) {
+      if (err && err.code === "quota_exceeded") { $("#syncTxt").textContent = "Spazio pieno"; }
+      if (cloud) setSync("error");
+    });
+    return chain;
+  }
+  function body(e) { return { ts: e.ts, emo: e.emo, int: e.int, text: e.text, tip: e.tip || null }; }
+  function upload(e) {
+    if (!cloud || e.demo) return;
+    queue(function () {
+      if (data.entries.indexOf(e) < 0) return Promise.resolve();
+      return cloud.col.doc(e.id).set(body(e)).then(function () { e.synced = true; persist(); });
+    });
+  }
+  function merge(snap) {
+    var remote = {};
+    snap.docs.forEach(function (d) {
+      var b = d.data();
+      if (b && EMO[b.emo] && typeof b.text === "string") remote[d.id] = { id: d.id, ts: +b.ts || Date.now(), emo: b.emo, int: Math.max(1, Math.min(5, +b.int || 3)), text: b.text, tip: b.tip || null, demo: false, synced: true };
+    });
+    var definitive = !snap.metadata.fromCache, keep = [], pending = [];
+    data.entries.forEach(function (e) {
+      if (e.demo) { keep.push(e); return; }
+      if (remote[e.id]) return;
+      if (e.synced && definitive) return;
+      keep.push(e); if (!e.synced) pending.push(e);
+    });
+    Object.keys(remote).forEach(function (k) { keep.push(remote[k]); });
+    data.entries = keep; persist(); renderAll();
+    if (definitive) { setSync("on"); pending.forEach(upload); }
+  }
+  function startCloud() {
+    if (!window.claude || typeof window.claude.use !== "function") { setSync("local"); return; }
+    setSync("connecting");
+    Promise.all([window.claude.use("db"), window.claude.use("user")]).then(function (r) {
+      var db = r[0], u = r[1];
+      if (!db || !u) { setSync("local"); return; }
+      return u.id().then(function (uid) {
+        if (!uid) { setSync("local"); return; }
+        cloud = { col: db.doc("data/users/" + uid + "/diario").collection("voci") };
+        cloud.col.onSnapshot(merge, function () { cloud = null; setSync("error"); });
+      });
+    }).catch(function () { cloud = null; setSync("local"); });
+  }
+
+  /* ---------- Sposta le voci ---------- */
+  function realEntries() { return data.entries.filter(function (e) { return !e.demo; }).map(function (e) { return { id: e.id, ts: e.ts, emo: e.emo, int: e.int, text: e.text, tip: e.tip || null }; }); }
+  $("#copyAll").addEventListener("click", function () {
+    var list = realEntries(), msg = $("#copyMsg");
+    if (!list.length) { msg.textContent = "Non ci sono voci da copiare in questa copia."; return; }
+    var txt = "IRIS1:" + JSON.stringify(list);
+    var ok = function () { msg.textContent = "Copiate " + plural(list.length, "voce", "voci") + ". Ora incollale nell’altra copia del diario."; };
+    var fallback = function () {
+      var t = $("#importBox"); t.value = txt; t.focus(); t.select();
+      var done = false; try { done = document.execCommand("copy"); } catch (e) {}
+      if (done) { ok(); t.value = ""; } else msg.textContent = "Ho selezionato il testo nel riquadro qui sotto: copialo con Ctrl + C.";
+    };
+    try { navigator.clipboard.writeText(txt).then(ok, fallback); } catch (e) { fallback(); }
+  });
+  $("#doImport").addEventListener("click", function () {
+    var raw = $("#importBox").value.trim(), msg = $("#importMsg"), list;
+    try { list = JSON.parse(raw.replace(/^IRIS1:/, "")); } catch (e) { list = null; }
+    if (!Array.isArray(list)) { msg.textContent = "Il testo incollato non sembra una copia del diario. Usa «Copia tutte le voci» nell’altra copia."; return; }
+    var have = {}; data.entries.forEach(function (e) { have[e.id] = true; });
+    var added = [];
+    list.forEach(function (x) {
+      if (!x || have[x.id] || !EMO[x.emo] || typeof x.text !== "string" || !/^[A-Za-z0-9_-]{1,60}$/.test(String(x.id))) return;
+      var e = { id: String(x.id), ts: +x.ts || Date.now(), emo: x.emo, int: Math.max(1, Math.min(5, +x.int || 3)), text: x.text.slice(0, 5000), tip: x.tip || null, demo: false, synced: false };
+      if (!e.tip) e.tip = advise(e);
+      data.entries.push(e); added.push(e); have[e.id] = true;
+    });
+    if (!added.length) { msg.textContent = "Nessuna voce nuova: quelle incollate ci sono già."; return; }
+    persist(); renderAll(); added.forEach(upload);
+    $("#importBox").value = "";
+    msg.textContent = "Importate " + plural(added.length, "voce", "voci") + ".";
+  });
+
+  /* ---------- Avvio ---------- */
+  buildChips(); buildSeg(); setIntensity(3, false); updateChips();
+  renderAll();
+  speakOnce("idle", idleLine(), "idle");
+  startCloud();
+})();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+}
+</script>
+</body>
+</html>
